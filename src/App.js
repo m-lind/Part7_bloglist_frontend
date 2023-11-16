@@ -6,13 +6,16 @@ import Notification from "./components/Notification";
 import LoginForm from "./components/LoginForm";
 import Togglable from "./components/Togglable";
 import BlogForm from "./components/BlogForm";
+import { setNotification } from "./reducers/notificationReducer";
+import { useDispatch } from "react-redux";
 
 const App = () => {
+  const dispatch = useDispatch();
+
   const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
-  const [info, setInfo] = useState("");
 
   const blogFormRef = useRef();
 
@@ -37,14 +40,6 @@ const App = () => {
     }
   }, []);
 
-  const notify = (message, type = "info") => {
-    setInfo({ message, type });
-
-    setTimeout(() => {
-      setInfo({ message: null, type: info.type });
-    }, 4000);
-  };
-
   const loginForm = () => {
     return (
       <div>
@@ -55,7 +50,6 @@ const App = () => {
           handleUsernameChange={({ target }) => setUsername(target.value)}
           handlePasswordChange={({ target }) => setPassword(target.value)}
           handleSubmit={handleLogin}
-          info={info}
         />
       </div>
     );
@@ -70,10 +64,10 @@ const App = () => {
     </div>
   );
 
-  const removeBlog = async blog => {
+  const removeBlog = async (blog) => {
     try {
       await blogService.remove(blog);
-      setBlogs(blogs.filter(b => b.id !== blog.id));
+      setBlogs(blogs.filter((b) => b.id !== blog.id));
     } catch (error) {
       console.log("Error removing blog", error);
     }
@@ -81,7 +75,7 @@ const App = () => {
 
   const blogForm = () => (
     <div>
-      {blogs.map(blog => (
+      {blogs.map((blog) => (
         <Blog
           key={blog.id}
           blog={blog}
@@ -93,7 +87,7 @@ const App = () => {
     </div>
   );
 
-  const updateBlogLikes = async blog => {
+  const updateBlogLikes = async (blog) => {
     try {
       const { user, ...blogWithoutUser } = blog;
       const updatedBlog = await blogService.addLike({
@@ -104,8 +98,8 @@ const App = () => {
         ...updatedBlog,
         user: blog.user,
       };
-      setBlogs(prevBlogs => {
-        const updatedBlogs = prevBlogs.map(prevBlog =>
+      setBlogs((prevBlogs) => {
+        const updatedBlogs = prevBlogs.map((prevBlog) =>
           prevBlog.id === updatedBlogWithUser.id
             ? updatedBlogWithUser
             : prevBlog
@@ -117,7 +111,7 @@ const App = () => {
     }
   };
 
-  const handleLogin = async event => {
+  const handleLogin = async (event) => {
     event.preventDefault();
 
     try {
@@ -132,7 +126,7 @@ const App = () => {
       setUsername("");
       setPassword("");
     } catch (exception) {
-      notify("wrong username or password", "error");
+      dispatch(setNotification("wrong username or password", 5));
       setUsername("");
       setPassword("");
     }
@@ -143,15 +137,20 @@ const App = () => {
     setUser(null);
   };
 
-  const handleCreateBlog = async blogObject => {
+  const handleCreateBlog = async (blogObject) => {
     try {
       const newBlog = await blogService.create(blogObject);
       blogFormRef.current.toggleVisibility();
       newBlog.user = user;
       setBlogs([...blogs, newBlog]);
-      notify(`a new blog ${newBlog.title} by ${newBlog.author} added`, "info");
+      dispatch(
+        setNotification(
+          `a new blog ${newBlog.title} by ${newBlog.author} added`,
+          5
+        )
+      );
     } catch (exception) {
-      notify(`creation failed`, "error");
+      dispatch(setNotification(`creation failed`, 5));
     }
   };
 
@@ -161,7 +160,7 @@ const App = () => {
       {user && (
         <div>
           <h2>blogs</h2>
-          {<Notification info={info} />}
+          <Notification />
           <p>
             {user.name} logged in
             <button onClick={handleLogout} id="logout-button">
