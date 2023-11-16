@@ -1,4 +1,3 @@
-import Notification from "./Notification";
 import PropTypes from "prop-types";
 
 const LoginForm = ({
@@ -11,7 +10,6 @@ const LoginForm = ({
 }) => {
   return (
     <div>
-      {<Notification info={info} />}
       <form onSubmit={handleSubmit}>
         <div>
           username
