@@ -7,7 +7,12 @@ import LoginForm from "./components/LoginForm";
 import Togglable from "./components/Togglable";
 import BlogForm from "./components/BlogForm";
 import { setNotification } from "./reducers/notificationReducer";
-import { initializeBlogs, createBlog } from "./reducers/blogReducer";
+import {
+  initializeBlogs,
+  createBlog,
+  likeBlog,
+  removeBlog,
+} from "./reducers/blogReducer";
 import { useDispatch, useSelector } from "react-redux";
 
 const App = () => {
@@ -72,10 +77,9 @@ const App = () => {
     </div>
   );
 
-  const removeBlog = async (blog) => {
+  const deleteBlog = async (blog) => {
     try {
-      await blogService.remove(blog);
-      //setBlogs(blogs.filter((b) => b.id !== blog.id));
+      dispatch(removeBlog(blog));
     } catch (error) {
       console.log("Error removing blog", error);
     }
@@ -88,7 +92,7 @@ const App = () => {
           key={blog.id}
           blog={blog}
           user={user}
-          handleRemove={removeBlog}
+          handleRemove={deleteBlog}
           handleLike={updateBlogLikes}
         />
       ))}
@@ -97,7 +101,9 @@ const App = () => {
 
   const updateBlogLikes = async (blog) => {
     try {
-      const { user, ...blogWithoutUser } = blog;
+      dispatch(likeBlog(blog));
+
+      /*const { user, ...blogWithoutUser } = blog;
       const updatedBlog = await blogService.addLike({
         ...blogWithoutUser,
         likes: blog.likes + 1,
@@ -105,7 +111,7 @@ const App = () => {
       const updatedBlogWithUser = {
         ...updatedBlog,
         user: blog.user,
-      };
+      };*/
       /*setBlogs((prevBlogs) => {
         const updatedBlogs = prevBlogs.map((prevBlog) =>
           prevBlog.id === updatedBlogWithUser.id
