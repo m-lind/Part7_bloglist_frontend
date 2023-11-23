@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import Blog from "./components/Blog";
-import blogService from "./services/blogs";
+import storageService from "./services/storage";
 import loginService from "./services/login";
 import Notification from "./components/Notification";
 import LoginForm from "./components/LoginForm";
@@ -13,45 +13,35 @@ import {
   likeBlog,
   removeBlog,
 } from "./reducers/blogReducer";
+import {
+  loginUser,
+  logoutUser,
+  setUserFromLocalStorage,
+} from "./reducers/loginReducer";
 import { useDispatch, useSelector } from "react-redux";
 
 const App = () => {
   const dispatch = useDispatch();
 
-  //const [blogs, setBlogs] = useState([]);
+  useEffect(() => {
+    dispatch(initializeBlogs());
+    const user = storageService.loadUser();
+    if (user) {
+      dispatch(setUserFromLocalStorage(user));
+    }
+  }, [dispatch]);
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [user, setUser] = useState(null);
 
   const blogFormRef = useRef();
 
-  /*useEffect(() => {
-    const fetchBlogs = async () => {
-      try {
-        const blogs = await blogService.getAll();
-        setBlogs(blogs.sort((a, b) => b.likes - a.likes));
-      } catch (error) {
-        console.error("Error fetching blogs:", error);
-      }
-    };
-    fetchBlogs();
-  }, []);*/
-
   const blogs = useSelector((state) => state.blogs);
-  //console.log(blogs);
+  const user = useSelector((state) => state.user);
 
   useEffect(() => {
     dispatch(initializeBlogs());
   }, [dispatch]);
-
-  useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON);
-      setUser(user);
-      blogService.setToken(user.token);
-    }
-  }, []);
 
   const loginForm = () => {
     return (
@@ -85,41 +75,25 @@ const App = () => {
     }
   };
 
-  const blogForm = () => (
-    <div>
-      {blogs.map((blog) => (
-        <Blog
-          key={blog.id}
-          blog={blog}
-          user={user}
-          handleRemove={deleteBlog}
-          handleLike={updateBlogLikes}
-        />
-      ))}
-    </div>
-  );
+  const blogForm = () => {
+    return (
+      <div>
+        {blogs.map((blog) => (
+          <Blog
+            key={blog.id}
+            blog={blog}
+            user={user}
+            handleRemove={deleteBlog}
+            handleLike={updateBlogLikes}
+          />
+        ))}
+      </div>
+    );
+  };
 
   const updateBlogLikes = async (blog) => {
     try {
-      dispatch(likeBlog(blog));
-
-      /*const { user, ...blogWithoutUser } = blog;
-      const updatedBlog = await blogService.addLike({
-        ...blogWithoutUser,
-        likes: blog.likes + 1,
-      });
-      const updatedBlogWithUser = {
-        ...updatedBlog,
-        user: blog.user,
-      };*/
-      /*setBlogs((prevBlogs) => {
-        const updatedBlogs = prevBlogs.map((prevBlog) =>
-          prevBlog.id === updatedBlogWithUser.id
-            ? updatedBlogWithUser
-            : prevBlog
-        );
-        return updatedBlogs;
-      });*/
+      dispatch(likeBlog({ ...blog, user }));
     } catch (error) {
       console.log("Error updating likes", error);
     }
@@ -129,14 +103,7 @@ const App = () => {
     event.preventDefault();
 
     try {
-      const user = await loginService.login({
-        username,
-        password,
-      });
-
-      window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user));
-      blogService.setToken(user.token);
-      setUser(user);
+      dispatch(loginUser({ username, password }));
       setUsername("");
       setPassword("");
     } catch (exception) {
@@ -147,13 +114,12 @@ const App = () => {
   };
 
   const handleLogout = () => {
-    window.localStorage.removeItem("loggedBlogappUser");
-    setUser(null);
+    dispatch(logoutUser());
   };
 
   const handleCreateBlog = async (blogObject) => {
     try {
-      dispatch(createBlog(blogObject));
+      dispatch(createBlog({ ...blogObject, user }));
       blogFormRef.current.toggleVisibility();
       dispatch(
         setNotification(

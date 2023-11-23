@@ -31,7 +31,8 @@ const slice = createSlice({
 export const initializeBlogs = () => {
   return async (dispatch) => {
     const blogs = await blogService.getAll();
-    dispatch(setBlogs(blogs));
+    const sortedBlogs = blogs.sort((a, b) => b.likes - a.likes);
+    dispatch(setBlogs(sortedBlogs));
   };
 };
 
