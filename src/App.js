@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import Blog from "./components/Blog";
 import storageService from "./services/storage";
+import loginService from "./services/login";
 import Notification from "./components/Notification";
 import LoginForm from "./components/LoginForm";
 import Togglable from "./components/Togglable";
@@ -18,8 +19,6 @@ import {
   setUserFromLocalStorage,
 } from "./reducers/loginReducer";
 import { useDispatch, useSelector } from "react-redux";
-import { Routes, Route, Link, useParams, useNavigate } from "react-router-dom";
-import Users from "./components/Users";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -133,50 +132,23 @@ const App = () => {
     }
   };
 
-  const userBlogCountMap = blogs.reduce((acc, blog) => {
-    const blogCreator = blog.user.username;
-    const creatorName = blog.user.name;
-
-    if (!acc[blogCreator]) {
-      acc[blogCreator] = { name: creatorName, count: 1 };
-    } else {
-      acc[blogCreator].count++;
-    }
-
-    return acc;
-  }, {});
-
-  const Home = () => {
-    return (
-      <div>
-        {!user && loginForm()}
-        {user && (
-          <div>
-            {createBlogForm()}
-            {blogForm()}
-          </div>
-        )}
-      </div>
-    );
-  };
-
   return (
     <div>
-      <h2>blogs</h2>
-      <Notification />
-      <p>
-        {user.name} logged in
-        <button onClick={handleLogout} id="logout-button">
-          logout
-        </button>
-      </p>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route
-          path="/users"
-          element={<Users userBlogCountMap={userBlogCountMap} />}
-        />
-      </Routes>
+      {!user && loginForm()}
+      {user && (
+        <div>
+          <h2>blogs</h2>
+          <Notification />
+          <p>
+            {user.name} logged in
+            <button onClick={handleLogout} id="logout-button">
+              logout
+            </button>
+          </p>
+          {createBlogForm()}
+          {blogForm()}
+        </div>
+      )}
     </div>
   );
 };
