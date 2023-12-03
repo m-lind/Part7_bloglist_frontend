@@ -1,14 +1,13 @@
-const Users = ({ userBlogCountMap }) => {
-  const users = userBlogCountMap;
+const Users = ({ users }) => {
   if (users) {
-    const userList = Object.keys(users).map((username) => {
+    const userList = users.map((user) => {
       return (
-        <div key={username}>
+        <div key={user.id}>
           <table>
             <tbody>
               <tr>
-                <td width="120px">{userBlogCountMap[username].name}</td>
-                <td>{userBlogCountMap[username].count}</td>
+                <td width="120px">{user.name}</td>
+                <td>{user.blogs.length}</td>
               </tr>
             </tbody>
           </table>

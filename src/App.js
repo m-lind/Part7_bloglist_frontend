@@ -18,7 +18,10 @@ import {
   logoutUser,
   setUserFromLocalStorage,
 } from "./reducers/loginReducer";
+import { initializeUsers } from "./reducers/usersReducer";
 import { useDispatch, useSelector } from "react-redux";
+import { Routes, Route } from "react-router-dom";
+import Users from "./views/Users";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -31,6 +34,10 @@ const App = () => {
     }
   }, [dispatch]);
 
+  useEffect(() => {
+    dispatch(initializeUsers());
+  }, [dispatch]);
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -38,6 +45,7 @@ const App = () => {
 
   const blogs = useSelector((state) => state.blogs);
   const user = useSelector((state) => state.user);
+  const users = useSelector((state) => state.users);
 
   useEffect(() => {
     dispatch(initializeBlogs());
@@ -132,6 +140,15 @@ const App = () => {
     }
   };
 
+  const Home = () => {
+    return (
+      <div>
+        {createBlogForm()}
+        {blogForm()}
+      </div>
+    );
+  };
+
   return (
     <div>
       {!user && loginForm()}
@@ -145,8 +162,10 @@ const App = () => {
               logout
             </button>
           </p>
-          {createBlogForm()}
-          {blogForm()}
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/users" element={<Users users={users} />} />
+          </Routes>
         </div>
       )}
     </div>

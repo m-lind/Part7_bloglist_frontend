@@ -1,3 +1,6 @@
+import axios from "axios";
+const baseUrl = "/api/users";
+
 let token = null;
 
 const STORAGE_KEY = "loggedBlogAppUser";
@@ -23,6 +26,12 @@ const clearUser = () => {
   token = null;
 };
 
+const getAll = () => {
+  const request = axios.get(baseUrl);
+  const result = request.then((response) => response.data);
+  return result;
+};
+
 const getToken = () => token;
 
 // eslint-disable-next-line import/no-anonymous-default-export
@@ -31,4 +40,5 @@ export default {
   getUser,
   clearUser,
   getToken,
+  getAll,
 };
