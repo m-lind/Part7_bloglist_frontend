@@ -1,13 +1,13 @@
-const User = (props) => {
-  if (!props.blogUser) {
+const User = ({ blogUser }) => {
+  if (!blogUser) {
     return null;
   }
 
   return (
     <div>
-      <h2>{props.blogUser.name}</h2>
+      <h2>{blogUser.name}</h2>
       <h3>added blogs</h3>
-      {props.blogUser.blogs.map((blog) => {
+      {blogUser.blogs.map((blog) => {
         return <div key={blog.id}>{blog.title}</div>;
       })}
     </div>

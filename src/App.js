@@ -22,6 +22,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Routes, Route, useMatch } from "react-router-dom";
 import Users from "./views/Users";
 import User from "./views/User";
+import BlogView from "./views/BlogView";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -154,6 +155,11 @@ const App = () => {
     ? users.find((user) => user.id === match.params.id)
     : null;
 
+  const matchBlog = useMatch("/blogs/:id");
+  const blog = matchBlog
+    ? blogs.find((blog) => blog.id === matchBlog.params.id)
+    : null;
+
   return (
     <div>
       {!user && loginForm()}
@@ -171,6 +177,10 @@ const App = () => {
             <Route path="/" element={<Home />} />
             <Route path="/users" element={<Users users={users} />} />
             <Route path="/users/:id" element={<User blogUser={blogUser} />} />
+            <Route
+              path="/blogs/:id"
+              element={<BlogView blog={blog} handleLike={updateBlogLikes} />}
+            />
           </Routes>
         </div>
       )}

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const Blog = ({ blog, user, handleRemove, handleLike }) => {
   const blogStyle = {
@@ -31,23 +32,9 @@ const Blog = ({ blog, user, handleRemove, handleLike }) => {
   return (
     <div style={blogStyle} className="blog">
       <div>
-        {blog.title} {blog.author}
-        <button onClick={() => toggleVisibility()}>{buttonLabel}</button>
-      </div>
-      <div style={showWhenVisible} data-testid="togglableContent">
-        <div>{blog.url}</div>
-        <div>
-          likes {blog.likes}
-          <button onClick={handleLikeClick} id="like-button">
-            like
-          </button>
-        </div>
-        <div>{blog.user.name}</div>
-        {blog.user.username === user.username && (
-          <button onClick={handleRemoveClick} id="remove-button">
-            remove
-          </button>
-        )}
+        <Link to={`/blogs/${blog.id}`}>
+          {blog.title} {blog.author}
+        </Link>
       </div>
     </div>
   );
