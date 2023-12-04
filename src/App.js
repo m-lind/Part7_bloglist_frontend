@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import Blog from "./components/Blog";
 import storageService from "./services/storage";
-import loginService from "./services/login";
 import Notification from "./components/Notification";
 import LoginForm from "./components/LoginForm";
 import Togglable from "./components/Togglable";
@@ -20,8 +19,9 @@ import {
 } from "./reducers/loginReducer";
 import { initializeUsers } from "./reducers/usersReducer";
 import { useDispatch, useSelector } from "react-redux";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useMatch } from "react-router-dom";
 import Users from "./views/Users";
+import User from "./views/User";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -149,6 +149,11 @@ const App = () => {
     );
   };
 
+  const match = useMatch("/users/:id");
+  const blogUser = match
+    ? users.find((user) => user.id === match.params.id)
+    : null;
+
   return (
     <div>
       {!user && loginForm()}
@@ -165,6 +170,7 @@ const App = () => {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/users" element={<Users users={users} />} />
+            <Route path="/users/:id" element={<User blogUser={blogUser} />} />
           </Routes>
         </div>
       )}
