@@ -20,6 +20,14 @@ const BlogView = ({ blog, handleLike }) => {
         </button>
       </div>
       <div>added by {blog.user.name}</div>
+      <h3>comments</h3>
+      {blog.comments.map((comment) => {
+        return (
+          <ul key={comment}>
+            <li>{comment}</li>
+          </ul>
+        );
+      })}
     </div>
   );
 };
