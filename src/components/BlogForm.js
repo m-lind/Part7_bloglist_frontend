@@ -1,11 +1,12 @@
 import { useState } from "react";
+import Button from "@mui/material/Button";
 
 const BlogForm = ({ createBlog }) => {
   const [newTitle, setNewTitle] = useState("");
   const [newAuthor, setNewAuthor] = useState("");
   const [newURL, setnewURL] = useState("");
 
-  const addBlog = event => {
+  const addBlog = (event) => {
     event.preventDefault();
     createBlog({
       title: newTitle,
@@ -26,7 +27,7 @@ const BlogForm = ({ createBlog }) => {
             type="text"
             value={newTitle}
             name="Title"
-            onChange={event => setNewTitle(event.target.value)}
+            onChange={(event) => setNewTitle(event.target.value)}
             data-testid="title-input"
             id="title-input"
           />
@@ -37,7 +38,7 @@ const BlogForm = ({ createBlog }) => {
             type="text"
             value={newAuthor}
             name="Author"
-            onChange={event => setNewAuthor(event.target.value)}
+            onChange={(event) => setNewAuthor(event.target.value)}
             data-testid="author-input"
             id="author-input"
           />
@@ -48,15 +49,15 @@ const BlogForm = ({ createBlog }) => {
             type="text"
             value={newURL}
             name="url"
-            onChange={event => setnewURL(event.target.value)}
+            onChange={(event) => setnewURL(event.target.value)}
             data-testid="url-input"
             id="url-input"
           />
         </div>
         <div>
-          <button id="create-button" type="submit">
+          <Button id="create-button" type="submit">
             create
-          </button>
+          </Button>
         </div>
       </div>
     </form>

@@ -18,6 +18,13 @@ import { Routes, Route, useMatch, Link } from "react-router-dom";
 import Users from "./views/Users";
 import User from "./views/User";
 import BlogView from "./views/BlogView";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableRow from "@mui/material/TableRow";
+import Paper from "@mui/material/Paper";
+import Button from "@mui/material/Button";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -73,9 +80,19 @@ const App = () => {
   const blogForm = () => {
     return (
       <div>
-        {blogs.map((blog) => (
-          <Blog key={blog.id} blog={blog} />
-        ))}
+        <TableContainer component={Paper}>
+          <Table>
+            <TableBody>
+              {blogs.map((blog) => (
+                <TableRow key={blog.id}>
+                  <TableCell>
+                    <Blog blog={blog} />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
       </div>
     );
   };
@@ -152,9 +169,13 @@ const App = () => {
           <div style={style}>
             <Link to="/">blogs</Link> <Link to="/users">users</Link> {user.name}{" "}
             logged in{" "}
-            <button onClick={handleLogout} id="logout-button">
+            <Button
+              variant="contained"
+              onClick={handleLogout}
+              id="logout-button"
+            >
               logout
-            </button>
+            </Button>
           </div>
           <h2>blog app</h2>
           <Notification />
