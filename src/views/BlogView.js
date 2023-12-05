@@ -1,4 +1,8 @@
 import CommentForm from "./../components/CommentForm";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemText from "@mui/material/ListItemText";
+import Button from "@mui/material/Button";
 
 const BlogView = ({ blog, handleLike }) => {
   if (!blog) {
@@ -17,20 +21,25 @@ const BlogView = ({ blog, handleLike }) => {
       <div>{blog.url}</div>
       <div>
         {blog.likes} likes
-        <button onClick={handleLikeClick} id="like-button">
+        <Button
+          variant="contained"
+          size="small"
+          onClick={handleLikeClick}
+          id="like-button"
+        >
           like
-        </button>
+        </Button>
       </div>
       <div>added by {blog.user.name}</div>
       <h3>comments</h3>
       <CommentForm blog={blog} />
-      {blog.comments.map((comment) => {
-        return (
-          <ul key={comment}>
-            <li>{comment}</li>
-          </ul>
-        );
-      })}
+      <List>
+        {blog.comments.map((comment) => (
+          <ListItem key={comment}>
+            <ListItemText>-{comment}</ListItemText>
+          </ListItem>
+        ))}
+      </List>
     </div>
   );
 };
