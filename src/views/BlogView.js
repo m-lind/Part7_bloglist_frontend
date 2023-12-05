@@ -1,3 +1,5 @@
+import CommentForm from "./../components/CommentForm";
+
 const BlogView = ({ blog, handleLike }) => {
   if (!blog) {
     return null;
@@ -21,6 +23,7 @@ const BlogView = ({ blog, handleLike }) => {
       </div>
       <div>added by {blog.user.name}</div>
       <h3>comments</h3>
+      <CommentForm blog={blog} />
       {blog.comments.map((comment) => {
         return (
           <ul key={comment}>
