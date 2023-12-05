@@ -3,17 +3,17 @@ const baseUrl = "/api/blogs";
 
 let token = null;
 
-const setToken = newToken => {
+const setToken = (newToken) => {
   token = `Bearer ${newToken}`;
 };
 
 const getAll = () => {
   const request = axios.get(baseUrl);
-  const result = request.then(response => response.data);
+  const result = request.then((response) => response.data);
   return result;
 };
 
-const create = async newObject => {
+const create = async (newObject) => {
   const config = {
     headers: { Authorization: token },
   };
@@ -22,12 +22,12 @@ const create = async newObject => {
   return response.data;
 };
 
-const addLike = async newObject => {
+const addLike = async (newObject) => {
   const response = await axios.put(`${baseUrl}/${newObject.id}`, newObject);
   return response.data;
 };
 
-const remove = async removeObject => {
+const remove = async (removeObject) => {
   const config = {
     headers: { Authorization: token },
   };
@@ -36,5 +36,12 @@ const remove = async removeObject => {
   return response.data;
 };
 
+const addComment = async (newObject) => {
+  const response = await axios.post(`${baseUrl}/${newObject.id}/comments`, {
+    comment: newObject.comment,
+  });
+  return response.data;
+};
+
 // eslint-disable-next-line import/no-anonymous-default-export
-export default { getAll, create, setToken, addLike, remove };
+export default { getAll, create, setToken, addLike, remove, addComment };
