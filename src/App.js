@@ -6,12 +6,7 @@ import LoginForm from "./components/LoginForm";
 import Togglable from "./components/Togglable";
 import BlogForm from "./components/BlogForm";
 import { setNotification } from "./reducers/notificationReducer";
-import {
-  initializeBlogs,
-  createBlog,
-  likeBlog,
-  removeBlog,
-} from "./reducers/blogReducer";
+import { initializeBlogs, createBlog, likeBlog } from "./reducers/blogReducer";
 import {
   loginUser,
   logoutUser,
@@ -19,7 +14,7 @@ import {
 } from "./reducers/loginReducer";
 import { initializeUsers } from "./reducers/usersReducer";
 import { useDispatch, useSelector } from "react-redux";
-import { Routes, Route, useMatch } from "react-router-dom";
+import { Routes, Route, useMatch, Link } from "react-router-dom";
 import Users from "./views/Users";
 import User from "./views/User";
 import BlogView from "./views/BlogView";
@@ -69,32 +64,17 @@ const App = () => {
 
   const createBlogForm = () => (
     <div>
-      <h2>create new</h2>
-      <Togglable buttonLabel="new blog" ref={blogFormRef}>
+      <Togglable buttonLabel="create new" ref={blogFormRef}>
         <BlogForm createBlog={handleCreateBlog} />
       </Togglable>
     </div>
   );
 
-  const deleteBlog = async (blog) => {
-    try {
-      dispatch(removeBlog(blog));
-    } catch (error) {
-      console.log("Error removing blog", error);
-    }
-  };
-
   const blogForm = () => {
     return (
       <div>
         {blogs.map((blog) => (
-          <Blog
-            key={blog.id}
-            blog={blog}
-            user={user}
-            handleRemove={deleteBlog}
-            handleLike={updateBlogLikes}
-          />
+          <Blog key={blog.id} blog={blog} />
         ))}
       </div>
     );
@@ -160,19 +140,24 @@ const App = () => {
     ? blogs.find((blog) => blog.id === matchBlog.params.id)
     : null;
 
+  const style = {
+    background: "lightgrey",
+  };
+
   return (
     <div>
       {!user && loginForm()}
       {user && (
         <div>
-          <h2>blogs</h2>
-          <Notification />
-          <p>
-            {user.name} logged in
+          <div style={style}>
+            <Link to="/">blogs</Link> <Link to="/users">users</Link> {user.name}{" "}
+            logged in{" "}
             <button onClick={handleLogout} id="logout-button">
               logout
             </button>
-          </p>
+          </div>
+          <h2>blog app</h2>
+          <Notification />
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/users" element={<Users users={users} />} />
