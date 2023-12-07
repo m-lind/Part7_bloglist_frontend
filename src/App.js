@@ -6,7 +6,12 @@ import LoginForm from "./components/LoginForm";
 import Togglable from "./components/Togglable";
 import BlogForm from "./components/BlogForm";
 import { setNotification } from "./reducers/notificationReducer";
-import { initializeBlogs, createBlog, likeBlog } from "./reducers/blogReducer";
+import {
+  initializeBlogs,
+  createBlog,
+  likeBlog,
+  removeBlog,
+} from "./reducers/blogReducer";
 import {
   loginUser,
   logoutUser,
@@ -88,6 +93,16 @@ const App = () => {
                   <TableCell>
                     <Blog blog={blog} />
                   </TableCell>
+                  <TableCell>
+                    {user && blog.user.username === user.username && (
+                      <Button
+                        variant="contained"
+                        onClick={() => deleteBlog(blog)}
+                      >
+                        remove
+                      </Button>
+                    )}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -102,6 +117,14 @@ const App = () => {
       dispatch(likeBlog({ ...blog, user }));
     } catch (error) {
       console.log("Error updating likes", error);
+    }
+  };
+
+  const deleteBlog = async (blog) => {
+    try {
+      dispatch(removeBlog(blog));
+    } catch (error) {
+      console.log("Error removing blog", error);
     }
   };
 
@@ -185,7 +208,15 @@ const App = () => {
             <Route path="/users/:id" element={<User blogUser={blogUser} />} />
             <Route
               path="/blogs/:id"
-              element={<BlogView blog={blog} handleLike={updateBlogLikes} />}
+              element={
+                <BlogView
+                  blog={blog}
+                  handleLike={updateBlogLikes}
+                  canRemove={
+                    user && blog && blog.user.username === user.username
+                  }
+                />
+              }
             />
           </Routes>
         </div>
